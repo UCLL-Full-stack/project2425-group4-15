@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["components/*"],
+      "@components/*": ["pages/*"],
       "@services/*": ["services/*"],
       "@types": ["types/index.ts"],
       "@styles/*": ["styles/*"]
