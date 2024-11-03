@@ -14,11 +14,25 @@ export class Review {
         user: User;
         reviewDate: Date;
     }) {
+        this.validate(review);
+
         this.id = review.id;
         this.content = review.content;
         this.rating = review.rating;
         this.user = review.user;
         this.reviewDate = review.reviewDate;
+    }
+
+    validate(review: {
+        id?: number;
+        content: string;
+        rating: number;
+        user: User;
+        reviewDate: Date;
+    }) {
+        if (review.rating < 0 || review.rating > 10) {
+            throw new Error('Rating must be between 0-10.');
+        }
     }
 
     getId(): number | undefined {
