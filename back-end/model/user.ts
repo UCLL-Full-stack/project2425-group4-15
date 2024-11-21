@@ -6,7 +6,7 @@ export class User {
     private password: string;
 
     constructor(user: { id?: number; username: string; email: string; password: string }) {
-        this.validatie(user);
+        this.validate(user);
 
         this.id = user.id;
         this.username = user.username;
@@ -15,8 +15,7 @@ export class User {
 
         User.users.push(this);
     }
-    validatie(user: { id?: number; username: string; email: string; password: string }) {
-        // field validaton:
+    validate(user: { id?: number; username: string; email: string; password: string }) {
         if (!user.username?.trim()) {
             throw new Error('Username is required.');
         }
@@ -26,12 +25,9 @@ export class User {
         if (!user.password?.trim()) {
             throw new Error('Password is required.');
         }
-        //pw lenght
         if (user.password.length < 8) {
             throw new Error('Password must be at least 8 characters long');
         }
-        // uniqueness validation
-        // Uniqueness validation
         if (User.users.some((existingUser) => existingUser.username === user.username)) {
             throw new Error('Username must be unique.');
         }

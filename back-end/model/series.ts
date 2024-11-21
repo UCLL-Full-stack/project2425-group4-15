@@ -20,6 +20,8 @@ export class Series {
         seasons: number;
         reviews: Review[];
     }) {
+        this.validate(series);
+
         this.id = series.id;
         this.title = series.title;
         this.genre = series.genre;
@@ -28,6 +30,36 @@ export class Series {
         this.director = series.director;
         this.seasons = series.seasons;
         this.reviews = series.reviews || [];
+    }
+
+    validate(series: {
+        id?: number;
+        title: string;
+        genre: string[];
+        releaseDate: Date;
+        cast: string[];
+        director: string;
+        seasons: number;
+        reviews: Review[];
+    }) {
+        if (!series.title?.trim()) {
+            throw new Error('Series title is required.');
+        }
+        if (series.genre.length < 1) {
+            throw new Error('Atleast one genre is required.');
+        }
+        if (!series.releaseDate) {
+            throw new Error('Release date is required.');
+        }
+        if (series.cast.length < 1) {
+            throw new Error('Atleast one actor is required.');
+        }
+        if (!series.director?.trim()) {
+            throw new Error('Director is required.');
+        }
+        if (series.seasons < 1) {
+            throw new Error('Atlease one season is required.');
+        }
     }
 
     getId(): number | undefined {

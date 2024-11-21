@@ -18,6 +18,8 @@ export class Movie {
         director: string;
         reviews: Review[];
     }) {
+        this.validate(movie);
+
         this.id = movie.id;
         this.title = movie.title;
         this.genre = movie.genre;
@@ -25,6 +27,32 @@ export class Movie {
         this.cast = movie.cast;
         this.director = movie.director;
         this.reviews = movie.reviews || [];
+    }
+
+    validate(movie: {
+        id?: number;
+        title: string;
+        genre: string[];
+        releaseDate: Date;
+        cast: string[];
+        director: string;
+        reviews: Review[];
+    }) {
+        if (!movie.title?.trim()) {
+            throw new Error('Movie title is required.');
+        }
+        if (movie.genre.length < 1) {
+            throw new Error('Atleast one genre is required.');
+        }
+        if (!movie.releaseDate) {
+            throw new Error('Release date is required.');
+        }
+        if (movie.cast.length < 1) {
+            throw new Error('Atleast one actor is required.');
+        }
+        if (!movie.director?.trim()) {
+            throw new Error('Director is required.');
+        }
     }
 
     getId(): number | undefined {
