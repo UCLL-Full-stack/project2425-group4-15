@@ -1,6 +1,7 @@
 import React from "react";
-import { movies } from "../data/movies";
-import MovieCard from "../components/MovieCard";
+import { movies } from "src/data/movies";
+import MovieCard from "src/components/MovieCard";
+
 
 const HomePage: React.FC = () => {
   return (
