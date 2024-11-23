@@ -35,7 +35,12 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
         Back
       </button>
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-        <img src={posterUrl} alt={`${title} poster`} className="rounded-lg" />
+        <img
+          src={posterUrl}
+          alt={`${title} poster`}
+          className="rounded-lg"
+          style={{ width: "474px", height: "711px", objectFit: "cover" }} // Fixed size 474x711
+        />
         <div>
           <h2 className="text-3xl font-bold text-white">{title}</h2>
           <p className="text-gray-300">{description}</p>
