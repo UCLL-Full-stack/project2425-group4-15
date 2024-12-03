@@ -1,0 +1,20 @@
+// prisma/schema.prisma
+
+// Stel de database in met SQL (vervang provider met "postgresql" voor PostgreSQL of "mysql" voor MySQL)
+datasource db {
+  provider = "mysql" // gebruik "postgresql" voor PostgreSQL
+  url      = env("DATABASE_URL") // Verbind met de database via een omgevingsvariabele
+}
+
+// Prisma client configureren
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Model voor gebruikersgegevens
+model User {
+  id       Int    @id @default(autoincrement()) // Primaire sleutel, automatisch toenemend
+  email    String @unique                      // Uniek e-mailadres
+  password String                              // Gehashed wachtwoord
+  createdAt DateTime @default(now())           // Tijdstip van aanmaak
+}
