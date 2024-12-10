@@ -1,9 +1,10 @@
 import * as dotenv from 'dotenv';
-import express from 'express';
+import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import * as bodyParser from 'body-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import userRouter from './controller/user.router';
 
 const app = express();
 dotenv.config();
@@ -19,3 +20,20 @@ app.get('/status', (req, res) => {
 app.listen(port || 3000, () => {
     console.log(`Back-end is running on port ${port}.`);
 });
+
+//* Swagger
+const swaggerOpts = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Courses API',
+            version: '1.0.0',
+        },
+    },
+    apis: ['*controller/*.ts'],
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOpts);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use('/users/', userRouter);

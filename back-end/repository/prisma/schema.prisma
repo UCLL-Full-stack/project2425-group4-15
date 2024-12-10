@@ -1,20 +1,66 @@
-// prisma/schema.prisma
-
-// Stel de database in met SQL (vervang provider met "postgresql" voor PostgreSQL of "mysql" voor MySQL)
-datasource db {
-  provider = "mysql" // gebruik "postgresql" voor PostgreSQL
-  url      = env("DATABASE_URL") // Verbind met de database via een omgevingsvariabele
-}
-
-// Prisma client configureren
 generator client {
   provider = "prisma-client-js"
 }
 
-// Model voor gebruikersgegevens
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model User {
-  id       Int    @id @default(autoincrement()) // Primaire sleutel, automatisch toenemend
-  email    String @unique                      // Uniek e-mailadres
-  password String                              // Gehashed wachtwoord
-  createdAt DateTime @default(now())           // Tijdstip van aanmaak
+  id              Int       @id @default(autoincrement())
+  username        String    @unique
+  email           String    @unique
+  password        String
+  reviews         Review[]  // One-to-many: A user can write many reviews
+  favorites       Favorite[] // Many-to-many: A user can favorite many movies or series
+}
+
+model Movie {
+  id              Int       @id @default(autoincrement())
+  title           String
+  genre           String[]
+  releaseDate     DateTime
+  cast            String[]
+  director        String
+  reviews         Review[]  // One-to-many: A movie can have many reviews
+  favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same movie
+}
+
+model Series {
+  id              Int       @id @default(autoincrement())
+  title           String
+  genre           String[]
+  releaseDate     DateTime
+  cast            String[]
+  director        String
+  seasons         Int
+  reviews         Review[]  // One-to-many: A series can have many reviews
+  favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same series
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  content    String
+  rating     Float    @default(0.0)
+  reviewDate DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  movie      Movie?   @relation(fields: [movieId], references: [id])
+  movieId    Int?
+  series     Series?  @relation(fields: [seriesId], references: [id])
+  seriesId   Int?
+}
+
+model Favorite {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  movie       Movie?   @relation(fields: [movieId], references: [id])
+  movieId     Int?
+  series      Series?  @relation(fields: [seriesId], references: [id])
+  seriesId    Int?
+
+
+  @@unique([userId, movieId, seriesId]) // Prevent duplicate favorites
 }

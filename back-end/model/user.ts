@@ -1,9 +1,10 @@
+import { User as UserPrisma } from '@prisma/client';
+
 export class User {
-    private static users: User[] = [];
-    private id?: number;
-    private username: string;
-    private email: string;
-    private password: string;
+    readonly id?: number;
+    readonly username: string;
+    readonly email: string;
+    readonly password: string;
 
     constructor(user: { id?: number; username: string; email: string; password: string }) {
         this.validate(user);
@@ -12,8 +13,6 @@ export class User {
         this.username = user.username;
         this.email = user.email;
         this.password = user.password;
-
-        User.users.push(this);
     }
     validate(user: { id?: number; username: string; email: string; password: string }) {
         if (!user.username?.trim()) {
@@ -24,15 +23,6 @@ export class User {
         }
         if (!user.password?.trim()) {
             throw new Error('Password is required.');
-        }
-        if (user.password.length < 8) {
-            throw new Error('Password must be at least 8 characters long');
-        }
-        if (User.users.some((existingUser) => existingUser.username === user.username)) {
-            throw new Error('Username must be unique.');
-        }
-        if (User.users.some((existingUser) => existingUser.email === user.email)) {
-            throw new Error('Email must be unique.');
         }
     }
 
@@ -59,5 +49,14 @@ export class User {
             this.email === user.getEmail() &&
             this.password === user.getPassword()
         );
+    }
+
+    static from({ id, username, email, password }: UserPrisma) {
+        return new User({
+            id,
+            username,
+            email,
+            password,
+        });
     }
 }
