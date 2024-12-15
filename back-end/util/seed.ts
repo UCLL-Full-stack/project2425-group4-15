@@ -1,3 +1,6 @@
+//npx ts-node ./util/seed.ts to set up database with default values
+
+
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

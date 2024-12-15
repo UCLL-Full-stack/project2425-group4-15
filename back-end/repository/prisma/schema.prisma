@@ -8,35 +8,35 @@ datasource db {
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  username        String    @unique
-  email           String    @unique
-  password        String
-  reviews         Review[]  // One-to-many: A user can write many reviews
-  favorites       Favorite[] // Many-to-many: A user can favorite many movies or series
+  id       Int      @id @default(autoincrement())
+  username String
+  email    String   @unique
+  password String
+  reviews  Review[] // One-to-many: A user can write many reviews
+  //favorites       Favorite[] // Many-to-many: A user can favorite many movies or series
 }
 
 model Movie {
-  id              Int       @id @default(autoincrement())
-  title           String
-  genre           String[]
-  releaseDate     DateTime
-  cast            String[]
-  director        String
-  reviews         Review[]  // One-to-many: A movie can have many reviews
-  favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same movie
+  id          Int      @id @default(autoincrement())
+  title       String
+  genre       String[]
+  releaseDate DateTime
+  cast        String[]
+  director    String
+  reviews     Review[] // One-to-many: A movie can have many reviews
+  //favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same movie
 }
 
 model Series {
-  id              Int       @id @default(autoincrement())
-  title           String
-  genre           String[]
-  releaseDate     DateTime
-  cast            String[]
-  director        String
-  seasons         Int
-  reviews         Review[]  // One-to-many: A series can have many reviews
-  favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same series
+  id          Int      @id @default(autoincrement())
+  title       String
+  genre       String[]
+  releaseDate DateTime
+  cast        String[]
+  director    String
+  seasons     Int
+  reviews     Review[] // One-to-many: A series can have many reviews
+  //favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same series
 }
 
 model Review {
@@ -52,15 +52,15 @@ model Review {
   seriesId   Int?
 }
 
-model Favorite {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int
-  movie       Movie?   @relation(fields: [movieId], references: [id])
-  movieId     Int?
-  series      Series?  @relation(fields: [seriesId], references: [id])
-  seriesId    Int?
-
-
-  @@unique([userId, movieId, seriesId]) // Prevent duplicate favorites
-}
+//model Favorite {
+//  id          Int      @id @default(autoincrement())
+//  user        User     @relation(fields: [userId], references: [id])
+//  userId      Int
+//  movie       Movie?   @relation(fields: [movieId], references: [id])
+//  movieId     Int?
+//  series      Series?  @relation(fields: [seriesId], references: [id])
+//  seriesId    Int?
+//
+//
+//  @@unique([userId, movieId, seriesId]) // Prevent duplicate favorites
+//}

@@ -1,4 +1,5 @@
 import { Review } from './review';
+import { Movie as MoviePrisma, Review as ReviewPrisma, User as UserPrisma } from '@prisma/client';
 
 export class Movie {
     private id?: number;
@@ -98,5 +99,25 @@ export class Movie {
             this.cast.every((c, i) => c === movie.getCast()[i]) &&
             this.reviews.every((review, i) => review.equals(movie.getReviews()[i]))
         );
+    }
+
+    static from({
+        id,
+        title,
+        genre,
+        releaseDate,
+        cast,
+        director,
+        reviews,
+    }: MoviePrisma & { reviews: (ReviewPrisma & { user: UserPrisma })[] }) {
+        return new Movie({
+            id,
+            title,
+            genre,
+            releaseDate,
+            cast,
+            director,
+            reviews: reviews.map((review) => Review.from(review)),
+        });
     }
 }

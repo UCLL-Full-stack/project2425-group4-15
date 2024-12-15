@@ -9,4 +9,12 @@ type AuthenticationResponse = {
     token: string;
 };
 
-export { UserInput, AuthenticationResponse };
+type MovieInput = {
+    title: string;
+    genre: string[];
+    releaseDate: Date;
+    cast: string[];
+    director: string;
+};
+
+export { UserInput, AuthenticationResponse, MovieInput };

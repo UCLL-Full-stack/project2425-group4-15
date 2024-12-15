@@ -1,4 +1,5 @@
 import { User } from './user';
+import { Review as ReviewPrisma, User as UserPrisma } from '@prisma/client';
 
 export class Review {
     private id?: number;
@@ -63,5 +64,15 @@ export class Review {
             this.user.getId() === review.getUser().getId() &&
             this.reviewDate.getTime() === review.getReviewDate().getTime()
         );
+    }
+
+    static from({ id, content, rating, user, reviewDate }: ReviewPrisma & { user: UserPrisma }) {
+        return new Review({
+            id,
+            content,
+            rating,
+            user: User.from(user),
+            reviewDate,
+        });
     }
 }
