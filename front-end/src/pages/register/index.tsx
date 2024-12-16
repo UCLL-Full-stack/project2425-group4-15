@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { registerUser } from "@services/registerService"; // Zorg dat het pad klopt!
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -7,58 +9,35 @@ const Register: React.FC = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
-  // Functie om te controleren of de gebruikersnaam of email uniek is
-  const isUnique = (field: string, value: string): boolean => {
-    return value !== "existingUser" && value !== "existingEmail@example.com";
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(""); // Reset errors
+    setSuccess(false); // Reset success state
 
-  // Functie om het formulier te valideren
-  const validateForm = () => {
-    setError("");
-    setSuccess(false);
-
-    if (!isUnique("username", username)) {
-      setError("Username is already taken.");
-      return false;
-    }
-
-    if (!isUnique("email", email)) {
-      setError("Email is already in use.");
-      return false;
+    // Formulier validatie
+    if (!username || !email || !password || !agreeToTerms) {
+      setError("All fields are required and you must agree to the terms.");
+      return;
     }
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters long.");
-      return false;
+      return;
     }
 
-    if (!agreeToTerms) {
-      setError("You must agree to the terms and conditions.");
-      return false;
-    }
+    try {
+      const data = await registerUser(username, email, password); // Service aanroepen
+      console.log("User registered:", data);
+      setSuccess(true);
 
-    return true;
-  };
-
-  // Functie die het formulier verstuurt
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Voorkom dat de pagina opnieuw laadt bij het versturen
-
-    if (validateForm()) {
-      setSuccess(true); // Als het formulier geldig is, zet 'success' op true
+      // Stuur de gebruiker door naar de login pagina
+      setTimeout(() => router.push("/login"), 2000);
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
     }
   };
-
-  // Zorg ervoor dat de component pas wordt gerenderd als deze gemonteerd is
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null; // Wacht tot de client geladen is om de component te renderen
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-indigo-600 p-6 animate-fade-in">
@@ -74,7 +53,7 @@ const Register: React.FC = () => {
         )}
         {success && (
           <p className="text-green-600 text-center text-sm animate-slide-up">
-            Your account has been created successfully!
+            Account created successfully! Redirecting to login...
           </p>
         )}
 
