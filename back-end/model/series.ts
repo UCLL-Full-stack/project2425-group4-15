@@ -1,4 +1,5 @@
 import { Review } from './review';
+import { Series as SeriesPrisma, Review as ReviewPrisma, User as UserPrisma } from '@prisma/client';
 
 export class Series {
     private id?: number;
@@ -8,6 +9,8 @@ export class Series {
     private cast: string[];
     private director: string;
     private seasons: number;
+    private coverPic: string;
+    private description: string;
     private reviews: Review[];
 
     constructor(series: {
@@ -18,6 +21,8 @@ export class Series {
         cast: string[];
         director: string;
         seasons: number;
+        coverPic: string;
+        description: string;
         reviews: Review[];
     }) {
         this.validate(series);
@@ -29,6 +34,8 @@ export class Series {
         this.cast = series.cast;
         this.director = series.director;
         this.seasons = series.seasons;
+        this.coverPic = series.coverPic;
+        this.description = series.description;
         this.reviews = series.reviews || [];
     }
 
@@ -40,6 +47,8 @@ export class Series {
         cast: string[];
         director: string;
         seasons: number;
+        coverPic: string;
+        description: string;
         reviews: Review[];
     }) {
         if (!series.title?.trim()) {
@@ -59,6 +68,12 @@ export class Series {
         }
         if (series.seasons < 1) {
             throw new Error('Atlease one season is required.');
+        }
+        if (!series.coverPic?.trim()) {
+            throw new Error('Cover picture is required.');
+        }
+        if (!series.description?.trim()) {
+            throw new Error('Description is required.');
         }
     }
 
@@ -90,6 +105,14 @@ export class Series {
         return this.seasons;
     }
 
+    getCoverPic(): string {
+        return this.coverPic;
+    }
+
+    getDescription(): string {
+        return this.description;
+    }
+
     addReview(review: Review): void {
         this.reviews.push(review);
     }
@@ -108,7 +131,35 @@ export class Series {
             this.cast.length === series.cast.length &&
             this.cast.every((c, i) => c === series.getCast()[i]) &&
             this.seasons === series.getSeasons() &&
+            this.coverPic === series.getCoverPic() &&
+            this.description === series.getDescription() &&
             this.reviews.every((review, i) => review.equals(series.getReviews()[i]))
         );
+    }
+
+    static from({
+        id,
+        title,
+        genre,
+        releaseDate,
+        cast,
+        director,
+        seasons,
+        coverPic,
+        description,
+        reviews,
+    }: SeriesPrisma & { reviews: (ReviewPrisma & { user: UserPrisma })[] }) {
+        return new Series({
+            id,
+            title,
+            genre,
+            releaseDate,
+            cast,
+            director,
+            seasons,
+            coverPic,
+            description,
+            reviews: reviews.map((review) => Review.from(review)),
+        });
     }
 }

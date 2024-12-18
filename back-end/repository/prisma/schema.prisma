@@ -23,6 +23,8 @@ model Movie {
   releaseDate DateTime
   cast        String[]
   director    String
+  coverPic    String
+  description String
   reviews     Review[] // One-to-many: A movie can have many reviews
   //favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same movie
 }
@@ -35,6 +37,8 @@ model Series {
   cast        String[]
   director    String
   seasons     Int
+  coverPic    String
+  description String
   reviews     Review[] // One-to-many: A series can have many reviews
   //favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same series
 }

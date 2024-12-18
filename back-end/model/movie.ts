@@ -8,6 +8,8 @@ export class Movie {
     private releaseDate: Date;
     private cast: string[];
     private director: string;
+    private coverPic: string;
+    private description: string;
     private reviews: Review[];
 
     constructor(movie: {
@@ -17,6 +19,8 @@ export class Movie {
         releaseDate: Date;
         cast: string[];
         director: string;
+        coverPic: string;
+        description: string;
         reviews: Review[];
     }) {
         this.validate(movie);
@@ -27,6 +31,8 @@ export class Movie {
         this.releaseDate = movie.releaseDate;
         this.cast = movie.cast;
         this.director = movie.director;
+        this.coverPic = movie.coverPic;
+        this.description = movie.description;
         this.reviews = movie.reviews || [];
     }
 
@@ -37,6 +43,7 @@ export class Movie {
         releaseDate: Date;
         cast: string[];
         director: string;
+        description: string;
         reviews: Review[];
     }) {
         if (!movie.title?.trim()) {
@@ -54,8 +61,10 @@ export class Movie {
         if (!movie.director?.trim()) {
             throw new Error('Director is required.');
         }
+        if (!movie.description?.trim()) {
+            throw new Error('Description is required.');
+        }
     }
-
     getId(): number | undefined {
         return this.id;
     }
@@ -80,6 +89,14 @@ export class Movie {
         return this.director;
     }
 
+    getCoverPic(): string | undefined {
+        return this.coverPic;
+    }
+
+    getDescription(): string {
+        return this.description;
+    }
+
     addReview(review: Review): void {
         this.reviews.push(review);
     }
@@ -97,6 +114,8 @@ export class Movie {
             this.releaseDate.getTime() === movie.releaseDate.getTime() &&
             this.cast.length === movie.cast.length &&
             this.cast.every((c, i) => c === movie.getCast()[i]) &&
+            this.coverPic === movie.getCoverPic() &&
+            this.description === movie.getDescription() &&
             this.reviews.every((review, i) => review.equals(movie.getReviews()[i]))
         );
     }
@@ -108,6 +127,8 @@ export class Movie {
         releaseDate,
         cast,
         director,
+        coverPic,
+        description,
         reviews,
     }: MoviePrisma & { reviews: (ReviewPrisma & { user: UserPrisma })[] }) {
         return new Movie({
@@ -117,6 +138,8 @@ export class Movie {
             releaseDate,
             cast,
             director,
+            coverPic,
+            description,
             reviews: reviews.map((review) => Review.from(review)),
         });
     }

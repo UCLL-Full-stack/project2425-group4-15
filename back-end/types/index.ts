@@ -15,6 +15,19 @@ type MovieInput = {
     releaseDate: Date;
     cast: string[];
     director: string;
+    coverPic: string;
+    description: string;
 };
 
-export { UserInput, AuthenticationResponse, MovieInput };
+type SeriesInput = {
+    title: string;
+    genre: string[];
+    releaseDate: Date;
+    cast: string[];
+    director: string;
+    seasons: number;
+    coverPic: string;
+    description: string;
+};
+
+export { UserInput, AuthenticationResponse, MovieInput, SeriesInput };

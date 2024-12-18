@@ -5,6 +5,8 @@ import * as bodyParser from 'body-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import userRouter from './controller/user.router';
+import movieRouter from './controller/movie.router';
+import seriesRouter from './controller/series.router';
 
 const app = express();
 dotenv.config();
@@ -37,3 +39,5 @@ const swaggerSpec = swaggerJSDoc(swaggerOpts);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/users/', userRouter);
+app.use('/movies/', movieRouter);
+app.use('/series/', seriesRouter);
