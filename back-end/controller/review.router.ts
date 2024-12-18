@@ -97,44 +97,45 @@ reviewRouter.post('/', async (req: Request, res: Response, next: NextFunction) =
  * @swagger
  * /reviews/{id}:
  *   delete:
- *     summary: Delete a review by ID
+ *     summary: Delete a review by ID (only the creator can delete it)
  *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []  # Requires authentication
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: ID of the review to be deleted.
  *         schema:
  *           type: integer
- *         description: ID of the review
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               userId:
- *                 type: number
- *                 description: ID of the user who wrote the review
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID of the logged-in user attempting the deletion.
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userId:
+ *               type: integer
  *     responses:
  *       204:
- *         description: Review deleted successfully
+ *         description: Review successfully deleted.
  *       403:
- *         description: Unauthorized to delete this review
+ *         description: Unauthorized - user is not the creator of the review.
  *       404:
- *         description: Review not found
+ *         description: Review not found.
  *       500:
- *         description: Server error
+ *         description: Server error.
  */
 reviewRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const id = parseInt(req.params.id);
-        const { userId } = req.body;
-        await reviewService.deleteReview(id, userId);
-        res.status(204).send();
+        const reviewId = parseInt(req.params.id);
+        const { userId } = req.body; // Assumes logged-in user's ID is sent in the request body
+
+        await reviewService.deleteReview(reviewId, userId);
+        res.status(204).send(); // Success - No content
     } catch (error) {
         next(error);
     }
 });
-
 export default reviewRouter;

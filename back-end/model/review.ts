@@ -5,14 +5,18 @@ export class Review {
     private id?: number;
     private content: string;
     private rating: number;
-    private user: User;
+    private userId: number;
+    private movieId?: number;
+    private seriesId?: number;
     private reviewDate: Date;
 
     constructor(review: {
         id?: number;
         content: string;
         rating: number;
-        user: User;
+        userId: number;
+        movieId?: number;
+        seriesId?: number;
         reviewDate: Date;
     }) {
         this.validate(review);
@@ -20,17 +24,13 @@ export class Review {
         this.id = review.id;
         this.content = review.content;
         this.rating = review.rating;
-        this.user = review.user;
+        this.userId = review.userId;
+        this.movieId = review.movieId;
+        this.seriesId = review.seriesId;
         this.reviewDate = review.reviewDate;
     }
 
-    validate(review: {
-        id?: number;
-        content: string;
-        rating: number;
-        user: User;
-        reviewDate: Date;
-    }) {
+    validate(review: { rating: number }) {
         if (review.rating < 0 || review.rating > 10) {
             throw new Error('Rating must be between 0-10.');
         }
@@ -48,8 +48,16 @@ export class Review {
         return this.rating;
     }
 
-    getUser(): User {
-        return this.user;
+    getUserId(): number {
+        return this.userId;
+    }
+
+    getMovieId(): number | undefined {
+        return this.movieId;
+    }
+
+    getSeriesId(): number | undefined {
+        return this.seriesId;
     }
 
     getReviewDate(): Date {
@@ -61,17 +69,27 @@ export class Review {
             this.id === review.getId() &&
             this.content === review.getContent() &&
             this.rating === review.getRating() &&
-            this.user.getId() === review.getUser().getId() &&
+            this.userId === review.getUserId() &&
             this.reviewDate.getTime() === review.getReviewDate().getTime()
         );
     }
 
-    static from({ id, content, rating, user, reviewDate }: ReviewPrisma & { user: UserPrisma }) {
+    static from({
+        id,
+        content,
+        rating,
+        userId,
+        movieId,
+        seriesId,
+        reviewDate,
+    }: ReviewPrisma): Review {
         return new Review({
             id,
             content,
             rating,
-            user: User.from(user),
+            userId,
+            movieId: movieId ?? undefined,
+            seriesId: seriesId ?? undefined,
             reviewDate,
         });
     }

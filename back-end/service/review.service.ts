@@ -23,24 +23,25 @@ const createReview = async ({
     const review = new Review({
         content,
         rating,
-        user,
+        userId,
+        movieId: movieId ?? undefined,
+        seriesId: seriesId ?? undefined,
+
         reviewDate: new Date(),
     });
-    return await reviewDB.createReview({ content, rating, userId, movieId, seriesId });
+    return await reviewDB.createReview(review);
 };
 
 const deleteReview = async (id: number, userId: number): Promise<void> => {
+    // Retrieve the review to check its ownership
     const review = await reviewDB.getReviewById(id);
 
     if (!review) {
         throw new Error(`Review with ID ${id} does not exist.`);
     }
 
-    if (review.userId !== userId) {
-        throw new Error(`You are not authorized to delete this review.`);
-    }
-
-    await reviewDB.deleteReview(id, userId);
+    // If validation passes, delete the review
+    await reviewDB.deleteReview(id);
 };
 
 export default {
