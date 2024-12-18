@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/router"; // Gebruik useRouter van Next.js
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter(); // Gebruik useRouter in plaats van useNavigate
 
-  // Functie om het formulier te valideren
   const validateForm = () => {
     setError("");
-    setSuccess(false);
 
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
       return false;
     }
 
-    if (password.length < 8) {
+    if (password.length < 5) {
       setError("Password must be at least 8 characters long.");
       return false;
     }
@@ -25,23 +23,32 @@ const Login: React.FC = () => {
     return true;
   };
 
-  // Functie die het formulier verstuurt
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      setSuccess(true); // Als het formulier geldig is, zet 'success' op true
+      try {
+        const response = await fetch("http://localhost:3000/users/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Login successful:", data);
+
+          // Navigeer naar de movies-pagina
+          router.push("/movies");
+        } else {
+          const errorData = await response.json();
+          setError(errorData.message || "Login failed. Please try again.");
+        }
+      } catch (err) {
+        setError("An error occurred while logging in.");
+      }
     }
   };
-
-  // Zorg ervoor dat de component pas wordt gerenderd als deze gemonteerd is
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null; // Wacht tot de client geladen is om de component te renderen
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 via-green-500 to-teal-600 p-6 animate-fade-in">
@@ -55,17 +62,10 @@ const Login: React.FC = () => {
             {error}
           </p>
         )}
-        {success && (
-          <p className="text-green-600 text-center text-sm animate-slide-up">
-            Login successful! Welcome back!
-          </p>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-teal-700">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-teal-700">Email</label>
             <input
               type="email"
               value={email}
@@ -77,9 +77,7 @@ const Login: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-teal-700">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-teal-700">Password</label>
             <input
               type="password"
               value={password}
