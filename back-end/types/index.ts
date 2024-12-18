@@ -30,4 +30,12 @@ type SeriesInput = {
     description: string;
 };
 
-export { UserInput, AuthenticationResponse, MovieInput, SeriesInput };
+type ReviewInput = {
+    content: string;
+    rating: number;
+    userId: number;
+    movieId?: number; // Optional because a review can be for a movie OR a series
+    seriesId?: number; // Optional because a review can be for a series OR a movie
+};
+
+export { UserInput, AuthenticationResponse, MovieInput, SeriesInput, ReviewInput };

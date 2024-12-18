@@ -173,7 +173,55 @@ const main = async () => {
         },
     });
 
-    console.log('Seeding completed!');
+    const review1 = await prisma.review.create({
+        data: {
+            content: 'An absolute masterpiece that redefined action movies!',
+            rating: 9.5,
+            reviewDate: new Date('2024-12-01'),
+            userId: user1.id,
+            movieId: movie1.id, // The Matrix
+        },
+    });
+
+    const review2 = await prisma.review.create({
+        data: {
+            content: 'Mind-bending plot with exceptional visual effects.',
+            rating: 9.0,
+            reviewDate: new Date('2024-12-02'),
+            userId: user2.id,
+            movieId: movie2.id, // Inception
+        },
+    });
+
+    const review3 = await prisma.review.create({
+        data: {
+            content: 'Breaking Bad is an intense, well-written drama that keeps you hooked.',
+            rating: 10.0,
+            reviewDate: new Date('2024-12-03'),
+            userId: user3.id,
+            seriesId: series1.id, // Breaking Bad
+        },
+    });
+
+    const review4 = await prisma.review.create({
+        data: {
+            content: 'The Witcher brings the fantasy world alive, with amazing performances.',
+            rating: 8.5,
+            reviewDate: new Date('2024-12-04'),
+            userId: user1.id,
+            seriesId: series4.id, // The Witcher
+        },
+    });
+
+    const review5 = await prisma.review.create({
+        data: {
+            content: 'A thrilling ride from start to finish. Christian Bale nailed it!',
+            rating: 9.8,
+            reviewDate: new Date('2024-12-05'),
+            userId: user2.id,
+            movieId: movie5.id, // The Dark Knight
+        },
+    });
 };
 
 main()
