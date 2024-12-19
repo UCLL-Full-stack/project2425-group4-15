@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { getMovies } from "src/services/moviesService";
+import { getMovies, Movie } from "src/services/moviesService"; // Make sure to import Movie interface
 import MovieCard from "src/components/MovieCard";
-import Link from "next/link";
+import Link from "next/link"; // You may use this for navigating, but it's not being used here
 
 const HomePage: React.FC = () => {
-  const [movies, setMovies] = useState<any[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]); // Use the Movie interface for type safety
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
     const fetchMovies = async () => {
       try {
         const data = await getMovies();
-        setMovies(data);
+        setMovies(data); // Assuming data is of type Movie[]
         setLoading(false);
       } catch (err) {
         setError("Error loading movies.");
@@ -24,6 +24,7 @@ const HomePage: React.FC = () => {
     fetchMovies();
   }, []);
 
+  // Toggle favorite movie
   const toggleFavorite = (id: number) => {
     setFavorites((prevFavorites) =>
       prevFavorites.includes(id)
@@ -32,10 +33,12 @@ const HomePage: React.FC = () => {
     );
   };
 
+  // Filter movies based on search query
   const filteredMovies = movies.filter((movie) =>
     movie.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
