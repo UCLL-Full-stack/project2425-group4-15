@@ -17,6 +17,23 @@ const getAllMovies = async (): Promise<Movie[]> => {
     }
 };
 
+const getMovieById = async (id: number): Promise<Movie | null> => {
+    try {
+        const movie = await database.movie.findFirst({
+            where: { id },
+            include: {
+                reviews: {
+                    include: { user: true },
+                },
+            },
+        });
+        return movie ? Movie.from(movie) : null;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server logs for details.');
+    }
+};
+
 const getMovieByTitle = async ({ title }: { title: string }): Promise<Movie | null> => {
     try {
         const movie = await database.movie.findFirst({
@@ -73,6 +90,7 @@ const deleteMovie = async (id: number): Promise<void> => {
 
 export default {
     getAllMovies,
+    getMovieById,
     getMovieByTitle,
     deleteMovie,
     createMovie,

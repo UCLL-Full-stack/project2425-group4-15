@@ -94,6 +94,47 @@ movieRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
 
 /**
  * @swagger
+ * /movies/{id}:
+ *   get:
+ *     summary: Get detailed information about a movie by ID
+ *     tags: [Movies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the movie to fetch details for.
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Details of the movie.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
+ *       404:
+ *         description: Movie not found.
+ *       500:
+ *         description: Server error.
+ */
+movieRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = parseInt(req.params.id);
+        const movie = await movieService.getMovieById(id);
+
+        if (!movie) {
+            res.status(404).json({ message: `Movie with ID ${id} not found.` });
+            return;
+        }
+
+        res.status(200).json(movie);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
  * /movies:
  *   post:
  *     summary: Create a new movie
