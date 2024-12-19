@@ -7,6 +7,14 @@ const getAllSeries = async (): Promise<Series[]> => {
     return await seriesDB.getAllSeries();
 };
 
+const getSeriesById = async (id: number): Promise<Series | null> => {
+    const series = await seriesDB.getSeriesById(id);
+    if (!series) {
+        throw new Error(`Series with ID ${id} not found.`);
+    }
+    return series;
+};
+
 const createSeries = async ({
     title,
     genre,
@@ -45,6 +53,7 @@ const deleteSeries = async (id: number): Promise<void> => {
 
 export default {
     getAllSeries,
+    getSeriesById,
     createSeries,
     deleteSeries,
 };

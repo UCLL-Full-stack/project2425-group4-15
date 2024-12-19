@@ -18,6 +18,23 @@ const getAllSeries = async (): Promise<Series[]> => {
     }
 };
 
+const getSeriesById = async (id: number): Promise<Series | null> => {
+    try {
+        const series = await database.series.findFirst({
+            where: { id },
+            include: {
+                reviews: {
+                    include: { user: true },
+                },
+            },
+        });
+        return series ? Series.from(series) : null;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server logs for details.');
+    }
+};
+
 const getSeriesByTitle = async ({ title }: { title: string }): Promise<Series | null> => {
     try {
         const serie = await database.series.findFirst({
@@ -75,6 +92,7 @@ const deleteSeries = async (id: number): Promise<void> => {
 
 export default {
     getAllSeries,
+    getSeriesById,
     getSeriesByTitle,
     createSeries,
     deleteSeries,

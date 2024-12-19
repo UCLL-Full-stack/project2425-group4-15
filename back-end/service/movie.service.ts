@@ -6,6 +6,14 @@ const getAllMovies = async (): Promise<Movie[]> => {
     return await movieDB.getAllMovies();
 };
 
+const getMovieById = async (id: number): Promise<Movie | null> => {
+    const movie = await movieDB.getMovieById(id);
+    if (!movie) {
+        throw new Error(`Movie with ID ${id} not found.`);
+    }
+    return movie;
+};
+
 const createMovie = async ({
     title,
     genre,
@@ -41,6 +49,7 @@ const deleteMovie = async (id: number): Promise<void> => {
 };
 
 export default {
+    getMovieById,
     getAllMovies,
     createMovie,
     deleteMovie,

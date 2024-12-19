@@ -99,6 +99,42 @@ seriesRouter.get('/', async (req: Request, res: Response, next: NextFunction) =>
 
 /**
  * @swagger
+ * /series/{id}:
+ *   get:
+ *     summary: Get detailed information about a series by ID
+ *     tags: [Series]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the movie to fetch details for.
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Details of the series.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Series'
+ *       404:
+ *         description: Series not found.
+ *       500:
+ *         description: Server error.
+ */
+seriesRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = parseInt(req.params.id);
+        const movie = await seriesService.getSeriesById(id);
+
+        res.status(200).json(movie);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
  * /series:
  *   post:
  *     summary: Create a new series
