@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router"; // Gebruik useRouter van Next.js
+import { login } from "@services/loginService"; // Importeer de login service
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -25,28 +26,23 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Reset errors
 
-    if (validateForm()) {
-      try {
-        const response = await fetch("http://localhost:3000/users/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
+    if (!validateForm()) {
+      return;
+    }
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Login successful:", data);
+    try {
+      const { username, token } = await login(email, password); // Service aanroepen
+      console.log("Logged in as:", username, "Token:", token);
 
-          // Navigeer naar de movies-pagina
-          router.push("/movies");
-        } else {
-          const errorData = await response.json();
-          setError(errorData.message || "Login failed. Please try again.");
-        }
-      } catch (err) {
-        setError("An error occurred while logging in.");
-      }
+      // Token opslaan in localStorage of cookies
+      localStorage.setItem("authToken", token);
+
+      // Redirect naar een andere pagina, bijvoorbeeld een dashboard
+      router.push("/movie");
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.");
     }
   };
 
@@ -65,7 +61,9 @@ const Login: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-teal-700">Email</label>
+            <label className="block text-sm font-medium text-teal-700">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -77,7 +75,9 @@ const Login: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-teal-700">Password</label>
+            <label className="block text-sm font-medium text-teal-700">
+              Password
+            </label>
             <input
               type="password"
               value={password}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { postReview } from "src/services/reviewService"; // Service om reviews naar de backend te sturen
 
-// Define the Review type here as well (or import if it's in a separate file)
 interface Review {
   id: number;
   username: string;
@@ -9,6 +9,7 @@ interface Review {
 }
 
 interface MovieDetailsProps {
+  id: number; // Film ID toegevoegd voor backend-integratie
   title: string;
   description: string;
   releaseDate: string;
@@ -20,6 +21,7 @@ interface MovieDetailsProps {
 }
 
 const MovieDetails: React.FC<MovieDetailsProps> = ({
+  id,
   title,
   description,
   releaseDate,
@@ -31,6 +33,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
 }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -40,23 +43,35 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
     setComment(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (rating === 0 || comment.trim() === "") {
       alert("Please provide a rating and comment.");
       return;
     }
-
-    const newReview = {
-      id: reviews.length + 1, // Simple ID generation based on review length (you could use a unique ID generator here)
-      username: "Anonymous", // You can replace this with a username if applicable
-      comment,
-      rating,
-    };
-
-    onAddReview(newReview);
-    setRating(0); // Reset rating
-    setComment(""); // Reset comment
+  
+    setIsSubmitting(true);
+  
+    try {
+      // Maak de review aan via de service
+      await postReview(comment, rating, 1, id); // Vervang 1 door een daadwerkelijke userId
+  
+      const newReview = {
+        id: reviews.length + 1, // Tijdelijke ID
+        username: "Anonymous", // Dit kun je dynamisch maken met user data
+        comment,
+        rating,
+      };
+  
+      onAddReview(newReview); // Voeg toe aan de lokale lijst
+      setRating(0); // Reset rating
+      setComment(""); // Reset comment
+    } catch (error) {
+      alert("Failed to submit your review. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+  
 
   return (
     <div className="p-6">
@@ -139,11 +154,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({
           <button
             onClick={handleSubmit}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400 transition"
+            disabled={isSubmitting}
           >
-            Submit Review
+            {isSubmitting ? "Submitting..." : "Submit Review"}
           </button>
         </div>
-
       </div>
     </div>
   );

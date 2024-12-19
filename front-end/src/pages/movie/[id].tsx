@@ -1,48 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { movies } from "../../data/movies";
-import MovieDetails from "../../components/MovieDetails";
-
-// Define the Review type here
-interface Review {
-  id: number;
-  username: string;
-  comment: string;
-  rating: number;
-}
+import { getMovieById } from "src/services/moviesService";
+import MovieDetails from "src/components/MovieDetails";
 
 const MoviePage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const movie = movies.find((movie) => movie.id === parseInt(id as string));
+  const [movie, setMovie] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [updatedMovies, setUpdatedMovies] = useState(movies);
+  useEffect(() => {
+    if (id) {
+      const fetchMovie = async () => {
+        try {
+          const data = await getMovieById(parseInt(id as string));
+          setMovie(data);
+          setLoading(false);
+        } catch (err) {
+          setError("Error loading movie.");
+          setLoading(false);
+        }
+      };
+      fetchMovie();
+    }
+  }, [id]);
 
-  const handleAddReview = (newReview: Review) => {
-    if (!movie) return;
-    const updatedMovie = { ...movie, reviews: [...movie.reviews, newReview] };
-    const updatedMoviesList = updatedMovies.map((m) =>
-      m.id === updatedMovie.id ? updatedMovie : m
-    );
-    setUpdatedMovies(updatedMoviesList);
-  };
+  if (loading) return <p>Loading...</p>;
+  if (error || !movie) return <p>Error: {error || "Movie not found"}</p>;
 
-  if (!movie) {
-    return (
-      <div className="p-6">
-        <p className="text-white">Movie not found.</p>
-        <button
-          onClick={() => router.push("/")}
-          className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
-        >
-          Back to List
-        </button>
-      </div>
-    );
-  }
-
-  return <MovieDetails {...movie} onBack={() => router.push("/")} onAddReview={handleAddReview} />;
+  return <MovieDetails {...movie} onBack={() => router.push("/")} />;
 };
 
 export default MoviePage;
