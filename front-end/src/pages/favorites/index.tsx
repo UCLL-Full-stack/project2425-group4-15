@@ -13,11 +13,15 @@ const FavoritesPage: React.FC = () => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await getFavoriteMovies();
+        const response = await getFavoriteMovies(); // Fetch the favorite movies
         setFavoriteMovies(response); // Zet de favoriete films in de staat
         setLoading(false);
-      } catch (err) {
-        setError("Error loading favorite movies.");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError("Error loading favorite movies: " + err.message); // Safely access the error message
+        } else {
+          setError("Unknown error occurred while fetching favorite movies.");
+        }
         setLoading(false);
       }
     };
@@ -41,7 +45,7 @@ const FavoritesPage: React.FC = () => {
               posterUrl={movie.coverPic}
               releaseDate={movie.releaseDate}
               isFavorite={true} // Alle films op deze pagina zijn favorieten
-              toggleFavorite={() => {}}
+              toggleFavorite={() => {}} // Deze functie is niet nodig voor de favorites-pagina
             />
           ))}
         </div>
