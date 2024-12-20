@@ -2,7 +2,7 @@
 
 export const getFavorites = async (token: string) => {
     try {
-        const response = await fetch('https://your-api-url.com/favorites', {
+        const response = await fetch('http://localhost:3000/favorites', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export const getFavorites = async (token: string) => {
 
 export const addMovieToFavorites = async (movieId: number, token: string) => {
     try {
-        const response = await fetch(`https://your-api-url.com/favorites/movies/${movieId}`, {
+        const response = await fetch(`http://localhost:3000/favorites/movies/${movieId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
