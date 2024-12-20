@@ -13,7 +13,7 @@ model User {
   email    String   @unique
   password String
   reviews  Review[] // One-to-many: A user can write many reviews
-  //favorites       Favorite[] // Many-to-many: A user can favorite many movies or series
+  favorites       Favorite[] // Many-to-many: A user can favorite many movies or series
 }
 
 model Movie {
@@ -26,7 +26,7 @@ model Movie {
   coverPic    String
   description String
   reviews     Review[] // One-to-many: A movie can have many reviews
-  //favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same movie
+  favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same movie
 }
 
 model Series {
@@ -40,7 +40,7 @@ model Series {
   coverPic    String
   description String
   reviews     Review[] // One-to-many: A series can have many reviews
-  //favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same series
+  favoritedBy     Favorite[] // Many-to-many: Many users can favorite the same series
 }
 
 model Review {
@@ -56,15 +56,15 @@ model Review {
   seriesId   Int?
 }
 
-//model Favorite {
-//  id          Int      @id @default(autoincrement())
-//  user        User     @relation(fields: [userId], references: [id])
-//  userId      Int
-//  movie       Movie?   @relation(fields: [movieId], references: [id])
-//  movieId     Int?
-//  series      Series?  @relation(fields: [seriesId], references: [id])
-//  seriesId    Int?
-//
-//
-//  @@unique([userId, movieId, seriesId]) // Prevent duplicate favorites
-//}
+ 
+model Favorite {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  movie       Movie?   @relation(fields: [movieId], references: [id])
+  movieId     Int?
+  series      Series?  @relation(fields: [seriesId], references: [id])
+  seriesId    Int?
+
+  @@unique([userId, movieId, seriesId])
+}

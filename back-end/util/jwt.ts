@@ -1,6 +1,11 @@
 import Jwt from 'jsonwebtoken';
 
-const generateJwtToken = ({ email }: { email: string }): string => {
+interface TokenPayload {
+    userId: number;
+    email: string;
+}
+
+const generateJwtToken = ({ userId, email }: TokenPayload): string => {
     const options = {
         expiresIn: `${process.env.JWT_EXPIRATION}h`,
         issuer: 'CineScope',
@@ -10,7 +15,7 @@ const generateJwtToken = ({ email }: { email: string }): string => {
         if (!process.env.JWT_SECRET) {
             throw new Error('JWT SECRET is not found.');
         }
-        return Jwt.sign({ email }, process.env.JWT_SECRET, options);
+        return Jwt.sign({ userId, email }, process.env.JWT_SECRET, options);
     } catch (error) {
         console.error(error);
         throw new Error('Error generating JWT token');
