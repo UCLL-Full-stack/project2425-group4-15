@@ -1,36 +1,34 @@
+// src/services/reviewService.ts
 
-export const postReview = async (
-    content: string,
-    rating: number,
-    userId: number,
-    movieId?: number,
-    seriesId?: number
-  ): Promise<void> => {
-    try {
-      const body = {
-        content,
-        rating,
-        userId,
-        movieId: movieId || null, // Alleen movieId als deze bestaat
-        seriesId: seriesId || null, // Alleen seriesId als deze bestaat
-      };
+export interface ReviewData {
+    content: string;
+    rating: number;
+    userId: number;
+    movieId: number;
+    seriesId?: number | null; // Allow seriesId to be either number, null, or undefined
+  }
   
-      const response = await fetch(`http://localhost:3000/reviews`, {
-        method: "POST",
+  export const submitReview = async (reviewData: ReviewData): Promise<any> => {
+    const apiUrl = 'http://localhost:3000/reviews'; // Your API URL for reviews
+    
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(reviewData),
       });
   
-      if (response.status === 201) {
-        console.log("Review created successfully");
-      } else {
-        throw new Error(`Failed to submit review: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Failed to submit review: ${response.statusText}`);
       }
+  
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error(error);
-      throw new Error("Unable to submit your review at this time.");
+      console.error('Error submitting review:', error);
+      throw error;
     }
   };
   
