@@ -50,8 +50,8 @@ const createReview = async (review: Review): Promise<Review> => {
                 content: review.getContent(),
                 rating: review.getRating(),
                 userId: review.getUserId(),
-                movieId: review.getMovieId() ?? null,
-                seriesId: review.getSeriesId() ?? null,
+                movieId: review.getMovieId() ?? undefined,
+                seriesId: review.getSeriesId() ?? undefined,
                 reviewDate: review.getReviewDate(),
             },
             include: {

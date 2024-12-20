@@ -40,7 +40,10 @@ const loginUser = async ({ email, password }: UserInput): Promise<Authentication
     if (!isValidPassword) {
         throw new Error('Email or password is incorrect.');
     }
-    const token = generateJwtToken({ email });
+    if (user.id === undefined) {
+        throw new Error('User ID is undefined.');
+    }
+    const token = generateJwtToken({ userId: user.id, email: user.email });
 
     return {
         username: user.username,

@@ -1,7 +1,6 @@
 import seriesDB from '../repository/series.db';
 import { Series } from '../model/series';
 import { SeriesInput } from '../types';
-import { release } from 'os';
 
 const getAllSeries = async (): Promise<Series[]> => {
     return await seriesDB.getAllSeries();

@@ -8,6 +8,8 @@ import userRouter from './controller/user.router';
 import movieRouter from './controller/movie.router';
 import seriesRouter from './controller/series.router';
 import reviewRouter from './controller/review.router';
+import favoriteRouter from './controller/favorite.router';
+
 
 const app = express();
 dotenv.config();
@@ -39,7 +41,9 @@ const swaggerOpts = {
 const swaggerSpec = swaggerJSDoc(swaggerOpts);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+
 app.use('/users/', userRouter);
 app.use('/movies/', movieRouter);
 app.use('/series/', seriesRouter);
 app.use('/reviews/', reviewRouter);
+app.use('/favorites/', favoriteRouter);
